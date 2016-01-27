@@ -3,11 +3,18 @@ package main
 import (
 	"compress/zlib"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 )
 
-func main() {
+func zip() {
+	w := zlib.NewWriter(os.Stdout)
+	io.Copy(w, os.Stdin)
+	w.Close()
+}
+
+func unzip() {
 	r, err := zlib.NewReader(os.Stdin)
 	if err != nil {
 		panic(err)
@@ -17,5 +24,13 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(string(dat))
+	fmt.Print(string(dat))
+}
+
+func main() {
+	if len(os.Args) == 2 && os.Args[1] == "-d" {
+		unzip()
+	} else {
+		zip()
+	}
 }
